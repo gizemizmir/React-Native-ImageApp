@@ -18,10 +18,33 @@ const themeSlice = createSlice({
   },
 });
 
+const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    user: null,
+  },
+  reducers: {
+    signIn: (state, action) => {
+      state.user = action.payload;
+    },
+    updateUser: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload,
+      };
+    },
+    logOut: (state, action) => {
+      state.user = null;
+    },
+  },
+});
+
+export const { signIn, updateUser, logOut } = authSlice.actions;
 export const { toggleTheme } = themeSlice.actions;
 
 export const store = configureStore({
   reducer: {
+    auth: authSlice.reducer,
     theme: themeSlice.reducer,
   },
 });
