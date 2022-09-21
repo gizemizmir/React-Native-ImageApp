@@ -8,22 +8,29 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
-import { auth } from "../utils/firebase";
+import { auth, db } from "../utils/firebase";
 import { useNavigation } from "@react-navigation/native";
+import { useForm, Controller } from "react-hook-form";
+import { setDoc, doc } from "firebase/firestore";
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [againPassword, setAgainPassword] = useState("");
   const { navigate } = useNavigation();
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSignUp = () => {
+  const { control, handleSubmit } = useForm();
+
+  const handleSignUp = (data) => {
+    console.log(data);
     setIsError(false);
     setErrorMessage("");
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((response) => {
+    createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then(async (response) => {
+        await setDoc(doc(db, `user`, response.user.uid), {
+          email: response.user.email,
+          photoURL: response.user.photoURL,
+          id: response.user.uid,
+        });
         navigate("SignIn");
       })
       .catch((error) => {
@@ -48,37 +55,58 @@ const SignUp = () => {
     <SafeAreaView style={styles.form}>
       <View style={styles.formArea}>
         <Text style={styles.pageLabel}>Sign Up</Text>
-        <Text style={styles.inputLabel}>Email</Text>
-        <TextInput
-          style={styles.input}
-          label="email"
-          autoCapitalize={false}
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
+        <Controller
+          control={control}
+          name="email"
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={styles.inputLabel}>Email</Text>
+                <TextInput
+                  {...field}
+                  style={styles.input}
+                  autoCapitalize={false}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
           }}
         />
-        <Text style={styles.inputLabel}>Password</Text>
-        <TextInput
-          style={styles.input}
-          label="password"
-          autoCapitalize={false}
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
+        <Controller
+          control={control}
+          name="password"
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={styles.inputLabel}>Password</Text>
+                <TextInput
+                  {...field}
+                  style={styles.input}
+                  autoCapitalize={false}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
           }}
         />
-        <Text style={styles.inputLabel}>Password Again</Text>
-        <TextInput
-          style={styles.input}
-          label="passwordAgain"
-          autoCapitalize={false}
-          value={againPassword}
-          onChangeText={(text) => {
-            setAgainPassword(text);
+        <Controller
+          control={control}
+          name="passwordAgain"
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={styles.inputLabel}>Password Again</Text>
+                <TextInput
+                  {...field}
+                  style={styles.input}
+                  autoCapitalize={false}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
           }}
         />
-        <Pressable style={styles.button} onPress={handleSignUp}>
+        <Pressable style={styles.button} onPress={handleSubmit(handleSignUp)}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
         {isError ? (

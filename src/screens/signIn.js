@@ -8,29 +8,31 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "@firebase/auth";
-import { auth } from "../utils/firebase";
+import { auth, db } from "../utils/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { signIn } from "../store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useForm, Controller } from "react-hook-form";
+import {doc, getDoc} from 'firebase/firestore';
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
+  const { control, handleSubmit } = useForm();
 
-  const handleSignIn = () => {
+  const handleSignIn = (data) => {
     setIsError(false);
     setErrorMessage("");
-    signInWithEmailAndPassword(auth, email, password)
-      .then((response) => {
-        storeData({
-          email: response.user.email,
-          password: password,
-        });
+    signInWithEmailAndPassword(auth, data.email, data.password)
+      .then(async response => {
+        const userDoc = doc(db, 'user', response.user.uid);
+        const userRef = await getDoc(userDoc);
+        if (userRef.exists()) {
+          storeData(userRef.data());
+        }
         // Get user AsyncStorage to save in Global State
         getData();
       })
@@ -69,27 +71,41 @@ const SignIn = () => {
     <SafeAreaView style={styles.form}>
       <View style={styles.formArea}>
         <Text style={styles.pageLabel}>Sign In</Text>
-        <Text style={styles.inputLabel}>Email</Text>
-        <TextInput
-          style={styles.input}
-          label="email"
-          autoCapitalize={false}
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
+        <Controller
+          control={control}
+          name="email"
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={styles.inputLabel}>Email</Text>
+                <TextInput
+                  {...field}
+                  style={styles.input}
+                  autoCapitalize={false}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
           }}
         />
-        <Text style={styles.inputLabel}>Password</Text>
-        <TextInput
-          style={styles.input}
-          label="password"
-          autoCapitalize={false}
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
+        <Controller
+          control={control}
+          name="password"
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={styles.inputLabel}>Password</Text>
+                <TextInput
+                  {...field}
+                  style={styles.input}
+                  autoCapitalize={false}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
           }}
         />
-        <Pressable style={styles.button} onPress={handleSignIn}>
+        <Pressable style={styles.button} onPress={handleSubmit(handleSignIn)}>
           <Text style={styles.buttonText}>Sign In</Text>
         </Pressable>
         {isError ? (
@@ -168,8 +184,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 35,
+    marginTop:10,
     paddingVertical: 12,
     paddingHorizontal: 32,
+    borderWidth:1,
+    borderRadius: 4,
+    borderColor: '#2196F3'
   },
   buttonSignUpText: {
     color: "#2196F3",
