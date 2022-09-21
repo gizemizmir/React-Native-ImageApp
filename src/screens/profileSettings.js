@@ -1,69 +1,129 @@
-import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { signInWithEmailAndPassword, updateEmail } from "@firebase/auth";
+import React, { useState } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Image,
+  ActivityIndicator,
+  Alert
+} from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../utils/firebase";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signIn } from "../store";
+
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
+import uuid from "react-native-uuid";
+import { db, storage } from "../utils/firebase";
+import { useForm, Controller } from "react-hook-form";
+import { updateUser } from "../store";
 
 const ProfileSettings = () => {
   const user = useSelector((state) => state.auth.user);
   const theme = useSelector((state) => state.theme.activeTheme);
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      ...user,
+    },
+  });
 
-  const [email, setEmail] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [image, setImage] = useState(user.photoURL);
+  const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    setEmail(user?.email);
-  }, []);
+  const pickImage = async () => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
 
-  const handleUpdate = async () => {
-    // update user
-    setIsError(false);
-    setErrorMessage("");
-    await updateEmail(auth.currentUser, email)
-      .then((response) => {})
-      .catch((error) => {
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            setIsError(true);
-            setErrorMessage("Email already in use !");
-            break;
-          case "auth/invalid-email":
-            setIsError(true);
-            setErrorMessage("Invalid email");
-            break;
-        }
-      });
-    await signInWithEmailAndPassword(auth, email, user?.password).then(
-      (response) => {
-        storeData({
-          email: response.user.email,
-          password: user?.password,
-        });
-        // Get user AsyncStorage to save in Global State
-        getData();
-        goBack();
+    console.log({ pickerResult });
+
+    handleImagePicked(pickerResult);
+  };
+
+  const handleImagePicked = async (pickerResult) => {
+    try {
+      setUploading(true);
+
+      if (!pickerResult.cancelled) {
+        const uploadUrl = await uploadImageAsync(pickerResult.uri);
+        setImage(uploadUrl);
       }
-    );
-  };
-
-  const storeData = async (data) => {
-    // Save user AsyncStorage
-    await AsyncStorage.setItem("user", JSON.stringify(data));
-  };
-
-  const getData = async () => {
-    const jsonValue = await AsyncStorage.getItem("user");
-    if (jsonValue != null) {
-      // Incoming data is saved to Global State
-      dispatch(signIn(JSON.parse(jsonValue)));
+    } catch (e) {
+      console.log(e);
+      Alert("Upload failed, sorry :(");
+    } finally {
+      setUploading(false)
     }
+  };
+
+  async function uploadImageAsync(uri) {
+    // Why are we using XMLHttpRequest? See:
+    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+    console.log(blob);
+
+    const fileRef = ref(storage, uuid.v4());
+    const result = await uploadBytes(fileRef, blob);
+
+    console.log("result", result);
+
+    // We're done with the blob, close and release it
+    // blob.close();
+
+    return await getDownloadURL(fileRef);
+  }
+
+  const maybeRenderUploadingOverlay = () => {
+    if (uploading) {
+      return (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: "rgba(0,0,0,0.4)",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          ]}
+        >
+          <ActivityIndicator color="#fff" animating size="large" />
+        </View>
+      );
+    }
+  };
+
+  const handleUpdateProfile = async (data) => {
+    const docRef = doc(db, "user", user.id);
+    await updateDoc(docRef, {
+      ...data,
+      photoURL: image,
+    }).then((response) => {
+      dispatch(updateUser({ ...data, photoURL: image }));
+
+      goBack();
+    });
   };
 
   return (
@@ -74,23 +134,91 @@ const ProfileSettings = () => {
       ]}
     >
       <View style={styles.formArea}>
-        <Text style={[styles.inputLabel, { color: theme.color }]}>Email</Text>
-        <TextInput
-          style={[styles.input, { color: theme.color }]}
-          label="email"
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
+        <Pressable onPress={pickImage}>
+          <Image style={styles.profileImage} source={{ uri: image }} />
+        </Pressable>
+        {maybeRenderUploadingOverlay()}
+        <Text style={[styles.textInfo, { color: theme.color }]}>
+          Click to image for upload a new photo
+        </Text>
+        <Controller
+          control={control}
+          name="firstName"
+          rules={{
+            required: { value: true, message: "First Name is required" },
+          }}
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={[styles.inputLabel, { color: theme.color }]}>
+                  First Name
+                </Text>
+                <TextInput
+                  style={[styles.input, { color: theme.color }]}
+                  {...field}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
           }}
         />
-        <Pressable style={styles.button} onPress={() => handleUpdate()}>
+        {errors.firstName ? (
+          <Text style={{ color: "red" }}>{errors.firstName.message}</Text>
+        ) : null}
+        <Controller
+          control={control}
+          name="lastName"
+          rules={{
+            required: { value: true, message: "Last Name is required" },
+          }}
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={[styles.inputLabel, { color: theme.color }]}>
+                  Last Name
+                </Text>
+                <TextInput
+                  style={[styles.input, { color: theme.color }]}
+                  {...field}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
+          }}
+        />
+        {errors.lastName ? (
+          <Text style={{ color: "red" }}>{errors.lastName.message}</Text>
+        ) : null}
+        <Controller
+          control={control}
+          name="location"
+          rules={{
+            required: { value: true, message: "Location is required" },
+          }}
+          render={({ field }) => {
+            return (
+              <>
+                <Text style={[styles.inputLabel, { color: theme.color }]}>
+                  Location
+                </Text>
+                <TextInput
+                  style={[styles.input, { color: theme.color }]}
+                  {...field}
+                  onChangeText={field.onChange}
+                />
+              </>
+            );
+          }}
+        />
+        {errors.location ? (
+          <Text style={{ color: "red" }}>{errors.location.message}</Text>
+        ) : null}
+        <Pressable
+          style={styles.button}
+          onPress={handleSubmit(handleUpdateProfile)}
+        >
           <Text style={styles.buttonText}>Update</Text>
         </Pressable>
-        {isError ? (
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        ) : (
-          <Text style={styles.errorText}> </Text>
-        )}
       </View>
     </View>
   );
@@ -177,6 +305,15 @@ const styles = StyleSheet.create({
     color: "#ff3333",
     marginTop: 20,
     fontWeight: "bold",
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 150,
+    marginBottom: 10,
+  },
+  textInfo: {
+    marginBottom: 30,
   },
 });
 
