@@ -11,6 +11,7 @@ const Settings = () => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.activeTheme);
+  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = async () => {
     // Remove user from AsyncStorage
@@ -32,10 +33,10 @@ const Settings = () => {
           { backgroundColor: theme?.backgroundColor },
         ]}
       >
-        <Image
-          style={styles.profileImage}
-          source={{ uri: "https://i.pravatar.cc/100?img=2" }}
-        />
+        <Text style={[styles.profileName, { color: theme?.color }]}>
+          {user.firstName + " " + user.lastName}
+        </Text>
+        <Image style={styles.profileImage} source={{ uri: user.photoURL }} />
         <Pressable
           style={styles.settingButton}
           onPress={() => {
@@ -99,6 +100,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.25,
   },
+  profileName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom:10,
+  }
 });
 
 export default Settings;
