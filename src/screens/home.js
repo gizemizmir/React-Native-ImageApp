@@ -1,27 +1,19 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
-import React, {useState} from "react";
+import { View, Text, StyleSheet, Pressable, Image, ActivityIndicator } from "react-native";
+import React, {useState, useEffect} from "react";
 import { useSelector } from "react-redux";
 import * as ImagePicker from 'expo-image-picker';
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { doc, addDoc, collection } from "firebase/firestore";
+import uuid from "react-native-uuid";
+import { db, storage } from "../utils/firebase";
+import * as Location from 'expo-location';
 
 const Home = () => {
   const theme = useSelector((state) => state.theme.activeTheme);
+  const user = useSelector((state) => state.auth.user);
   const [image, setImage] = useState(null);
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
+  const [uploading, setUploading] = useState(false);
+  const [location, setLocation] = useState(null);
 
   // This function is triggered when the "Open camera" button pressed
   const openCamera = async () => {
@@ -35,14 +27,111 @@ const Home = () => {
 
     const result = await ImagePicker.launchCameraAsync();
 
-    // Explore the result
-    console.log(result);
-
     if (!result.cancelled) {
-      setImage(result.uri);
-      console.log(result.uri);
+      handleImagePicked(result);
     }
   }
+
+  const pickImage = async () => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0,
+    });
+
+    console.log({ pickerResult });
+
+    handleImagePicked(pickerResult);
+  };
+
+  const handleImagePicked = async (pickerResult) => {
+    try {
+      setUploading(true);
+
+      if (!pickerResult.cancelled) {
+        const uploadUrl = await uploadImageAsync(pickerResult.uri);
+        setImage(uploadUrl);
+        console.log("pickerResult", pickerResult)
+        addImageToStorage(uploadUrl);
+      }
+    } catch (e) {
+      console.log(e);
+      Alert("Upload failed, sorry :(");
+    } finally {
+      setUploading(false)
+    }
+  };
+
+  async function uploadImageAsync(uri) {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+    console.log(blob);
+
+    const fileRef = ref(storage, uuid.v4());
+    const result = await uploadBytes(fileRef, blob);
+
+    console.log("result", result);
+
+    // We're done with the blob, close and release it
+    blob.close();
+
+    return await getDownloadURL(fileRef);
+  }
+
+  const addImageToStorage = async (uploadUrl) => {
+    await addDoc(collection(db, `image`), {
+      userID: user.id,
+      photoURL: uploadUrl,
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude
+    }).then((response) => {
+    });
+  };
+
+  const maybeRenderUploadingOverlay = () => {
+    if (uploading) {
+      return (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: "rgba(0,0,0,0.4)",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          ]}
+        >
+          <ActivityIndicator color="#fff" animating size="large" />
+        </View>
+      );
+    }
+  };
+
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+  }
+
+  useEffect(()=>{
+    getLocation();
+  })
 
   return (
     <View
@@ -51,13 +140,13 @@ const Home = () => {
       <Text style={[styles.pageTitle, { color: theme.color }]}>
         Share Photo
       </Text>
+      {maybeRenderUploadingOverlay()}
       <Pressable style={styles.homeButton} onPress={pickImage}>
         <Text style={styles.buttonText}>Select from library</Text>
       </Pressable>
       <Pressable style={styles.homeButton} onPress={openCamera}>
         <Text style={styles.buttonText}>Open camera</Text>
       </Pressable>
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
     </View>
   );
 };
