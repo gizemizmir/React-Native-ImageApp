@@ -59,15 +59,15 @@ yarn start
 
 ### Gif
 
-<img src="src/assets/appScreen.gif" width="400" />
+<img src="src/assets/appScreen.gif" width="300" />
 
 ### ScreenShot Light Theme
 
 <table>
     <tbody>
         <tr>
-            <td><img src="src/assets/signin.png" width="300" style="margin-right:30px;"/></td>
-            <td><img src="src/assets/signup.png" width="300" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/signin.png" width="250" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/signup.png" width="250" style="margin-right:30px;"/></td>
         </tr>
         <tr>
             <td><img src="src/assets/home.png" width="300" style="margin-right:30px;"/></td>
@@ -79,6 +79,25 @@ yarn start
         </tr>
         <tr>
             <td><img src="src/assets/themesetting.png" width="300" style="margin-right:30px;"/></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+### ScreenShot Dark Theme
+
+<table>
+    <tbody>
+        <tr>
+            <td><img src="src/assets/homedark.png" width="300" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/mapdark.png" width="300" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/settingdark.png" width="300" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/profiledark.png" width="300" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/themedark.png" width="300" style="margin-right:30px;"/></td>
             <td>&nbsp;</td>
         </tr>
     </tbody>
