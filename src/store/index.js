@@ -54,14 +54,31 @@ const imageSlice = createSlice({
   },
 });
 
+const locationSlice = createSlice({
+  name: "location",
+  initialState: {
+    locationItem: null,
+  },
+  reducers: {
+    setLocation: (state, action) => {
+      const { location } = action.payload;
+      return {
+        locationItem: location,
+      };
+    },
+  },
+});
+
 export const { signIn, updateUser, logOut } = authSlice.actions;
 export const { toggleTheme } = themeSlice.actions;
 export const { setImages } = imageSlice.actions;
+export const { setLocation } = locationSlice.actions;
 
 export const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
     theme: themeSlice.reducer,
     images: imageSlice.reducer,
+    location: locationSlice.reducer,
   },
 });

@@ -45,8 +45,6 @@ const ProfileSettings = () => {
       aspect: [4, 3],
     });
 
-    console.log({ pickerResult });
-
     handleImagePicked(pickerResult);
   };
 
@@ -80,12 +78,9 @@ const ProfileSettings = () => {
       xhr.open("GET", uri, true);
       xhr.send(null);
     });
-    console.log(blob);
 
     const fileRef = ref(storage, uuid.v4());
     const result = await uploadBytes(fileRef, blob);
-
-    console.log("result", result);
 
     // We're done with the blob, close and release it
     // blob.close();

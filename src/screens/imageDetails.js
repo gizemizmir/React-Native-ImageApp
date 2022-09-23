@@ -26,7 +26,6 @@ const ImageDetails = () => {
     const q = query(collection(db, 'user'), where('id', '==', imageItem.userID));
     await getDocs(q).then(res => {
       const _user = res.docs.map(item => item.data());
-      console.log(_user)
       setUser(_user);
     });
   };

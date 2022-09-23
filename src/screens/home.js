@@ -13,12 +13,13 @@ import { addDoc, collection } from "firebase/firestore";
 import uuid from "react-native-uuid";
 import { db, storage } from "../utils/firebase";
 import * as Location from "expo-location";
+import { setLocation } from "../store";
 
 const Home = () => {
   const theme = useSelector((state) => state.theme.activeTheme);
   const user = useSelector((state) => state.auth.user);
+  const location = useSelector((state) => state.location.locationItem);
   const [uploading, setUploading] = useState(false);
-  const [location, setLocation] = useState(null);
 
   // This function is triggered when the "Open camera" button pressed
   const openCamera = async () => {
@@ -43,8 +44,6 @@ const Home = () => {
       aspect: [4, 3],
       quality: 0,
     });
-
-    console.log({ pickerResult });
 
     handleImagePicked(pickerResult);
   };
@@ -79,12 +78,9 @@ const Home = () => {
       xhr.open("GET", uri, true);
       xhr.send(null);
     });
-    console.log(blob);
 
     const fileRef = ref(storage, uuid.v4());
     const result = await uploadBytes(fileRef, blob);
-
-    console.log("result", result);
 
     // We're done with the blob, close and release it
     blob.close();
