@@ -61,7 +61,7 @@ yarn start
 
 <img src="src/assets/appScreen.gif" width="250" />
 
-### ScreenShot Light Theme
+### ScreenShot Light / Dark Theme
 
 <table>
     <tbody>
@@ -71,34 +71,23 @@ yarn start
         </tr>
         <tr>
             <td><img src="src/assets/home.png" width="250" style="margin-right:30px;"/></td>
-            <td><img src="src/assets/map.png" width="250" style="margin-right:30px;"/></td>
-        </tr>
-        <tr>
-            <td><img src="src/assets/setting.png" width="250" style="margin-right:30px;"/></td>
-            <td><img src="src/assets/profilesetting.png" width="250" style="margin-right:30px;"/></td>
-        </tr>
-        <tr>
-            <td><img src="src/assets/themesetting.png" width="250" style="margin-right:30px;"/></td>
-            <td>&nbsp;</td>
-        </tr>
-    </tbody>
-</table>
-
-### ScreenShot Dark Theme
-
-<table>
-    <tbody>
-        <tr>
             <td><img src="src/assets/homedark.png" width="250" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/map.png" width="250" style="margin-right:30px;"/></td>
             <td><img src="src/assets/mapdark.png" width="250" style="margin-right:30px;"/></td>
         </tr>
         <tr>
+            <td><img src="src/assets/setting.png" width="250" style="margin-right:30px;"/></td>
             <td><img src="src/assets/settingdark.png" width="250" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/profilesetting.png" width="250" style="margin-right:30px;"/></td>
             <td><img src="src/assets/profiledark.png" width="250" style="margin-right:30px;"/></td>
         </tr>
         <tr>
+            <td><img src="src/assets/themesetting.png" width="250" style="margin-right:30px;"/></td>
             <td><img src="src/assets/themedark.png" width="250" style="margin-right:30px;"/></td>
-            <td>&nbsp;</td>
         </tr>
     </tbody>
 </table>
