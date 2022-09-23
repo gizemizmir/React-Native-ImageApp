@@ -1,14 +1,10 @@
-import { Dimensions, StyleSheet, Alert } from "react-native";
+import { StyleSheet, Alert } from "react-native";
 import { View } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
-import {
-  getDocs,
-  query,
-  collection,
-} from 'firebase/firestore';
-import {db} from '../utils/firebase';
+import { getDocs, query, collection } from "firebase/firestore";
+import { db } from "../utils/firebase";
 import CustomMarker from "../components/CustomMarker/CustomMarker";
 import { useSelector } from "react-redux";
 
@@ -32,9 +28,9 @@ const Map = () => {
   };
 
   const getImages = async () => {
-    const q = query(collection(db, 'image'));
-    await getDocs(q).then(res => {
-      const _images = res.docs.map(item => item.data());
+    const q = query(collection(db, "image"));
+    await getDocs(q).then((res) => {
+      const _images = res.docs.map((item) => item.data());
       setImages(_images);
     });
   };
@@ -47,8 +43,7 @@ const Map = () => {
     getImages();
   }, []);
 
-  useEffect(() => {
-  }, [images]);
+  useEffect(() => {}, [images]);
 
   return (
     <View>
@@ -61,14 +56,14 @@ const Map = () => {
         userInterfaceStyle={theme.type}
         minZoomLevel={5}
       >
-        {images?.map((imageItem,index) => {
+        {images?.map((imageItem, index) => {
           return (
-              <CustomMarker
-                key={index}
-                image={imageItem}
-                lat={imageItem.latitude}
-                long={imageItem.longitude}
-              />
+            <CustomMarker
+              key={index}
+              image={imageItem}
+              lat={imageItem.latitude}
+              long={imageItem.longitude}
+            />
           );
         })}
       </MapView>
@@ -78,8 +73,8 @@ const Map = () => {
 
 const styles = StyleSheet.create({
   map: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });
 

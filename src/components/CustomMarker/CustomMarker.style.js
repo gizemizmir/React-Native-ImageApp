@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   markerImage: {
-    borderColor: "blue",
+    borderColor: "#06B6D4",
     borderWidth: 4,
     width: 34,
     height: 34,

@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "#2196F3",
+    backgroundColor: "#06B6D4",
   },
   buttonText: {
     color: "#FFF",
@@ -189,10 +189,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderWidth:1,
     borderRadius: 4,
-    borderColor: '#2196F3'
+    borderColor: '#06B6D4'
   },
   buttonSignUpText: {
-    color: "#2196F3",
+    color: "#06B6D4",
     fontSize: 15,
     lineHeight: 21,
     fontWeight: "bold",

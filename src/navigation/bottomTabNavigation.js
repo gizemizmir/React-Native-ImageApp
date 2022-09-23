@@ -5,7 +5,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 
 import SettingStackNavigation from "./settingStackNavigation";
-import { Text, View } from "react-native";
 import HomeScreen from "../screens/home";
 import MapScreen from "../screens/map";
 
@@ -20,6 +19,7 @@ const BottomTabNavigation = () => {
       screenOptions={{
         tabBarStyle: { backgroundColor: theme.backgroundColor },
         tabBarInactiveTintColor: theme.color,
+        tabBarActiveTintColor: theme.activeTintColor
       }}
     >
       <BottomNav.Screen

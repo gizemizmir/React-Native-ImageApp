@@ -1,17 +1,22 @@
-import { View, Text, StyleSheet, Pressable, Image, ActivityIndicator } from "react-native";
-import React, {useState, useEffect} from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
-import { doc, addDoc, collection } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import uuid from "react-native-uuid";
 import { db, storage } from "../utils/firebase";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 const Home = () => {
   const theme = useSelector((state) => state.theme.activeTheme);
   const user = useSelector((state) => state.auth.user);
-  const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [location, setLocation] = useState(null);
 
@@ -30,7 +35,7 @@ const Home = () => {
     if (!result.cancelled) {
       handleImagePicked(result);
     }
-  }
+  };
 
   const pickImage = async () => {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -50,15 +55,13 @@ const Home = () => {
 
       if (!pickerResult.cancelled) {
         const uploadUrl = await uploadImageAsync(pickerResult.uri);
-        setImage(uploadUrl);
-        console.log("pickerResult", pickerResult)
         addImageToStorage(uploadUrl);
       }
     } catch (e) {
       console.log(e);
       Alert("Upload failed, sorry :(");
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
   };
 
@@ -94,9 +97,8 @@ const Home = () => {
       userID: user.id,
       photoURL: uploadUrl,
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude
-    }).then((response) => {
-    });
+      longitude: location.coords.longitude,
+    }).then((response) => {});
   };
 
   const maybeRenderUploadingOverlay = () => {
@@ -120,18 +122,18 @@ const Home = () => {
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert('Permission to access location was denied');
-        return;
-      }
+    if (status !== "granted") {
+      Alert("Permission to access location was denied");
+      return;
+    }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-  }
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getLocation();
-  })
+  });
 
   return (
     <View
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "#2196F3",
+    backgroundColor: "#06B6D4",
     marginBottom: 20,
   },
   buttonText: {

@@ -19,7 +19,7 @@ const CustomMarker = ({ image, lat, long }) => {
       {image.photoURL ? (
         <>
         <Image style={styles.markerImage} source={{ uri: image.photoURL }} />
-        <Fontisto style={styles.markerBottom} name="map-marker" size={35} color={"blue"} />
+        <Fontisto style={styles.markerBottom} name="map-marker" size={35} color={"#06B6D4"} />
         </>
       ) : (
         <View style={styles.markerView}>

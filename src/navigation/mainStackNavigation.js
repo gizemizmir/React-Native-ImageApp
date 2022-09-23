@@ -46,6 +46,7 @@ const MainStackNavigation = () => {
       initialRouteName={"BottomNav"}
       screenOptions={{
         headerShown: false,
+        headerTintColor: theme.activeTintColor
       }}
     >
       {user ? (

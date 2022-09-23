@@ -67,8 +67,6 @@ const ProfileSettings = () => {
   };
 
   async function uploadImageAsync(uri) {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -292,7 +290,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "#2196F3",
+    backgroundColor: "#06B6D4",
   },
   buttonText: {
     color: "#FFF",
@@ -311,6 +309,8 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 150,
     marginBottom: 10,
+    borderWidth:3,
+    borderColor: "#06B6D4"
   },
   textInfo: {
     marginBottom: 30,

@@ -34,9 +34,9 @@ const Settings = () => {
         ]}
       >
         <Text style={[styles.profileName, { color: theme?.color }]}>
-          {user.firstName + " " + user.lastName}
+          {user?.firstName + " " + user?.lastName}
         </Text>
-        <Image style={styles.profileImage} source={{ uri: user.photoURL }} />
+        <Image style={styles.profileImage} source={{ uri: user?.photoURL }} />
         <Pressable
           style={styles.settingButton}
           onPress={() => {
@@ -81,6 +81,8 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 150,
     marginBottom: 30,
+    borderWidth:3,
+    borderColor: "#06B6D4"
   },
   settingButton: {
     width: 200,
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "#2196F3",
+    backgroundColor: "#06B6D4",
     marginBottom: 30,
   },
   buttonText: {

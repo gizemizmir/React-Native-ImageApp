@@ -15,6 +15,7 @@ const SettingStackNavigation = () => {
     <SettingsStackNav.Navigator
       screenOptions={{
         headerShown: true,
+        headerTintColor: theme.activeTintColor
       }}
     >
       <SettingsStackNav.Screen
