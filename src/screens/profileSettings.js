@@ -36,7 +36,7 @@ const ProfileSettings = () => {
     },
   });
 
-  const [image, setImage] = useState(user.photoURL);
+  const [image, setImage] = useState(user?.photoURL);
   const [uploading, setUploading] = useState(false);
 
   const pickImage = async () => {

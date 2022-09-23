@@ -6,12 +6,14 @@ import * as Location from "expo-location";
 import { getDocs, query, collection } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import CustomMarker from "../components/CustomMarker/CustomMarker";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setImages } from "../store";
 
 const Map = () => {
   const theme = useSelector((state) => state.theme.activeTheme);
-  const [images, setImages] = useState([]);
+  const images = useSelector((state) => state.images.imageItems);
   const mapRef = useRef();
+  const dispatch = useDispatch();
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -31,7 +33,7 @@ const Map = () => {
     const q = query(collection(db, "image"));
     await getDocs(q).then((res) => {
       const _images = res.docs.map((item) => item.data());
-      setImages(_images);
+      dispatch(setImages({ images: _images }));
     });
   };
 

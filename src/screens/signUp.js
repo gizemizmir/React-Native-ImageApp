@@ -21,7 +21,6 @@ const SignUp = () => {
   const { control, handleSubmit } = useForm();
 
   const handleSignUp = (data) => {
-    console.log(data);
     setIsError(false);
     setErrorMessage("");
     createUserWithEmailAndPassword(auth, data.email, data.password)

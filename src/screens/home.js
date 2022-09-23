@@ -139,6 +139,9 @@ const Home = () => {
     <View
       style={[styles.homeContainer, { backgroundColor: theme.backgroundColor }]}
     >
+      <Text style={[styles.userTitle, { color: theme.color }]}>
+        Welcome {user?.firstName}!
+      </Text>
       <Text style={[styles.pageTitle, { color: theme.color }]}>
         Share Photo
       </Text>
@@ -163,7 +166,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginBottom: 120,
+  },
+  userTitle: {
+    fontSize: 15,
+    fontWeight: "bold",
     marginTop: 50,
+    marginBottom:20,
   },
   homeButton: {
     alignItems: "center",

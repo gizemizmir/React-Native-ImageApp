@@ -53,7 +53,7 @@ const SettingStackNavigation = () => {
           headerTitleStyle: {
             color: theme.color,
           },
-          headerTitle: "Profile Setting",
+          headerTitle: "Profile Settings",
         }}
       />
     </SettingsStackNav.Navigator>

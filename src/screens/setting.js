@@ -16,8 +16,8 @@ const Settings = () => {
   const handleLogout = async () => {
     // Remove user from AsyncStorage
     await AsyncStorage.removeItem("user");
-    dispatch(logOut());
-    auth.signOut();
+    dispatch(logOut()); // Delete user redux
+    auth.signOut(); // Firebase authtentication signOut
   };
 
   return (
@@ -34,7 +34,7 @@ const Settings = () => {
         ]}
       >
         <Text style={[styles.profileName, { color: theme?.color }]}>
-          {user?.firstName + " " + user?.lastName}
+          Welcome {user?.firstName}!
         </Text>
         <Image style={styles.profileImage} source={{ uri: user?.photoURL }} />
         <Pressable
