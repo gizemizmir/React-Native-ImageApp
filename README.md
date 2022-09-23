@@ -78,6 +78,10 @@ yarn start
             <td><img src="src/assets/mapdark.png" width="250" style="margin-right:30px;"/></td>
         </tr>
         <tr>
+            <td><img src="src/assets/image.png" width="250" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/imagedark.png" width="250" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
             <td><img src="src/assets/setting.png" width="250" style="margin-right:30px;"/></td>
             <td><img src="src/assets/settingdark.png" width="250" style="margin-right:30px;"/></td>
         </tr>

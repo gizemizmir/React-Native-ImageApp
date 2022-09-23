@@ -42,7 +42,7 @@ const ImageDetails = () => {
   return (
     <View style={[styles.imageContainer, { backgroundColor: theme.backgroundColor }]}>
       <Image style={styles.image} source={{uri: imageItem.photoURL}}/>
-      <Text style={styles.imageText}>Uploaded by {user?.[0]?.firstName + ' ' + user?.[0]?.lastName}</Text>
+      <Text style={[styles.imageText, {color: theme.color}]}>Uploaded by {user?.[0]?.firstName + ' ' + user?.[0]?.lastName}</Text>
     </View>
   )
 }
