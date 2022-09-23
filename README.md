@@ -54,3 +54,32 @@ yarn start
 ```
 
 <br/>
+
+## Screens
+
+### Gif
+
+<img src="src/assets/appScreen.gif" width="400" />
+
+### ScreenShot Light Theme
+
+<table>
+    <tbody>
+        <tr>
+            <td><img src="src/assets/signin.png" width="300" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/signup.png" width="300" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/home.png" width="300" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/map.png" width="300" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/setting.png" width="300" style="margin-right:30px;"/></td>
+            <td><img src="src/assets/profilesetting.png" width="300" style="margin-right:30px;"/></td>
+        </tr>
+        <tr>
+            <td><img src="src/assets/themesetting.png" width="300" style="margin-right:30px;"/></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
