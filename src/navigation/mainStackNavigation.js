@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigation from "./bottomTabNavigation";
 import SignInScreen from "../screens/signIn";
 import SignUpScreen from "../screens/signUp";
+import ImageDetails from "../screens/imageDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../store";
 import { auth } from "../utils/firebase";
@@ -53,6 +54,20 @@ const MainStackNavigation = () => {
           <MainStackNav.Screen
             name="BottomNav"
             component={BottomTabNavigation}
+          />
+          <MainStackNav.Screen
+            name="ImageDetails"
+            component={ImageDetails}
+            options={{
+              headerShown: true,
+              headerBackTitleVisible: false,
+              headerStyle: {
+                backgroundColor: theme.backgroundColor,
+              },
+              headerTitleStyle: {
+                color: theme.color,
+              },
+            }}
           />
         </>
       ) : (
