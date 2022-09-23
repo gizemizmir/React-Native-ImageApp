@@ -8,8 +8,10 @@ import {
   where,
 } from 'firebase/firestore';
 import {db} from '../utils/firebase';
+import { useSelector } from 'react-redux';
 
 const ImageDetails = () => {
+  const theme = useSelector((state) => state.theme.activeTheme);
   const [user, setUser] = useState(null)
   const {
     params: { imageItem },
@@ -38,14 +40,17 @@ const ImageDetails = () => {
 
 
   return (
-    <View>
+    <View style={[styles.imageContainer, { backgroundColor: theme.backgroundColor }]}>
       <Image style={styles.image} source={{uri: imageItem.photoURL}}/>
-      <Text style={styles.imageText}>By {user?.[0]?.firstName + ' ' + user?.[0]?.lastName}</Text>
+      <Text style={styles.imageText}>Uploaded by {user?.[0]?.firstName + ' ' + user?.[0]?.lastName}</Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  imageContainer: {
+    flex: 1,
+  },
   image: {
     width: Dimensions.get("screen").width,
     height: 300,
@@ -54,6 +59,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontWeight: 'bold',
     fontSize: 18,
+    flex:1,
+    alignSelf: 'center'
   }
 });
 
